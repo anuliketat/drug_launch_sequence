@@ -5,7 +5,7 @@
 forex_python == 1.8
 
 # npv_opt_streamlit.py: 7,18
-matplotlib == 3.1.1
+matplotlib == 3.6.2
 
 # npv_opt_streamlit.py: 16
 mpld3 == 0.5.8
