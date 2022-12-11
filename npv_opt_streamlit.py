@@ -16,7 +16,7 @@ import warnings
 import mpld3
 import streamlit.components.v1 as components
 from matplotlib.ticker import PercentFormatter
-from funcs import *
+# from funcs import *
 
 warnings.filterwarnings("ignore")
 
