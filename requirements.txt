@@ -24,3 +24,6 @@ seaborn == 0.9.0
 
 # npv_opt_streamlit.py: 1,17
 streamlit == 1.15.0
+
+# npv_opt_streamlit.py: 1
+openpyxl == 3.0.10
