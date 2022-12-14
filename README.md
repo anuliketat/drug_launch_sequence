@@ -14,11 +14,12 @@ Requires `python 3.x.x`.
 The setup also requires downloading data corpuses. Run the following commands after installing all the packages from `requirements.txt`.
 
 ### Running
-To run your development server, first activate the virtual environment and then execute `python run.py`
+To run the server, go to Web App link [NPV Optimizer - Streamlit](https://launch-sequence-optimizer.streamlit.app/)
 
 ## Built with
+ - [Streamlit](https://streamlit.io/cloud) - Cloud server
  - [Python](https://www.python.org/) - Language
- - [pigar](https://github.com/damnever/pigar) - To automatically geenrate `requirements.txt`
+ - [pigar](https://github.com/damnever/pigar) - To automatically generate `requirements.txt`
 
 ## Authors
  - **Anudeep Ramisetty** - [@anuliketat](https://github.com/anuliketat)
