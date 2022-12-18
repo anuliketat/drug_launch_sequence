@@ -549,6 +549,7 @@ else:
       st.session_state.opt_bt_state = True
       final, y2, irp_pr = run_opt(irp_base, ranges, N)
       y2 = y2.copy()
+      final = final.copy()
       end_time = time.time()
       time_lapsed = end_time - start_time
       time_convert(time_lapsed)
