@@ -392,9 +392,9 @@ else:
     for d in [price, vol, cogs, dis, claw]:
         d.columns = ['Country'] + x
 
-    irp_at = pd.read_excel('IRP Data_modified_1810_SC.xlsx', sheet_name='At Launch')
-    irp_post = pd.read_excel('IRP Data_modified_1810_SC.xlsx', sheet_name='Post Launch')
-    irp_base = pd.read_excel('IRP Data_modified_1810_SC.xlsx', sheet_name='Base')
+    irp_at = pd.read_excel(data_file, sheet_name='At Launch')
+    irp_post = pd.read_excel(data_file, sheet_name='Post Launch')
+    irp_base = pd.read_excel(data_file, sheet_name='Base')
     x = pd.DataFrame()
     for c in irp_base['Country']:
         d = irp_base[irp_base['Country']==c]
@@ -493,143 +493,143 @@ else:
         s = base['Launch Month'].tolist() # sequence
         y_base, irp = main(s, base) # npv data
       return y_base, irp
-      y, irp = run_base(irp_base)
-      y = y.copy()
-      npv = y.iloc[:, 1:].sum(1).sum()
-      col1, col2 = st.columns(2)
-      col1.header('Base Case Scenario')
-      col1.write('Base case NPV: $ '+str(round(npv/1e+09, 4)) + 'B')
-      col1.write(dict(irp_base[['Country', 'Launch Date']].values))
-      my_expander = col1.expander("Show IRP updated prices")
-      with my_expander:
-        st.write(irp)
+    y, irp = run_base(irp_base)
+    y = y.copy()
+    npv = y.iloc[:, 1:].sum(1).sum()
+    col1, col2 = st.columns(2)
+    col1.header('Base Case Scenario')
+    col1.write('Base case NPV: $ '+str(round(npv/1e+09, 4)) + 'B')
+    col1.write(dict(irp_base[['Country', 'Launch Date']].values))
+    my_expander = col1.expander("Show IRP updated prices")
+    with my_expander:
+      st.write(irp)
 
-      st.sidebar.subheader('Constraints')
-      N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
-      st.sidebar.write('Select Launch range of countries')
-      ranges = []
-      for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
-        values = st.sidebar.slider(cont, 1, 36, (mi, ma))
-        ranges.append(values)
-      ranges = [list(range(i[0], i[1]+1)) for i in ranges]
-      opt_bt = st.sidebar.button(label='Optimize')
-      st.sidebar.write('')
-      
-      if "opt_bt_state" not in st.session_state:
-        st.session_state.opt_bt_state = False
+    st.sidebar.subheader('Constraints')
+    N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
+    st.sidebar.write('Select Launch range of countries')
+    ranges = []
+    for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
+      values = st.sidebar.slider(cont, 1, 36, (mi, ma))
+      ranges.append(values)
+    ranges = [list(range(i[0], i[1]+1)) for i in ranges]
+    opt_bt = st.sidebar.button(label='Optimize')
+    st.sidebar.write('')
+
+    if "opt_bt_state" not in st.session_state:
+      st.session_state.opt_bt_state = False
         
-      @st.cache(suppress_st_warning=True, show_spinner=False)
-      def run_opt(base, launch_range, N):  
-        final = base.copy()
-        final['range'] = launch_range
-        final['Launch Month'] = final['range'].apply(lambda x: x[0])
-        with st.spinner('Optimizing for Best NPV...'):
-          while final['Launch Month'].value_counts().reset_index()['Launch Month'].max()>N:
-            seq_ = final['Launch Month'].tolist()
-            # final['Launch Month'] = final['Launch']
-            y_, _ = main(seq_, final)
-            final = update_launch(y_, final, N)
-            strt = dat(2023, 1, 1)
-            new_dates = [str(strt + relativedelta(months=m-1)) for m in final['Launch Month']]
-            final['Launch Date'] = new_dates
-        s2 = final['Launch Month'].tolist()
-        y2, irp_pr = main(s2, final)
-        y2['best_npv'] = y2.iloc[:, 1:].sum(1)
-        return final, y2, irp_pr
-        
-      def time_convert(sec):
-        mins = sec // 60
-        sec = sec % 60
-        hours = mins // 60
-        mins = mins % 60
-        st.markdown(f"Time Taken - {int(sec)} secs")
-        
-      if opt_bt:
-        start_time = time.time()
-        st.session_state.opt_bt_state = True
-        data, y2, irp_pr = run_opt(irp_base, ranges, N)
-        y2 = y2.copy()
-        end_time = time.time()
-        time_lapsed = end_time - start_time
-        time_convert(time_lapsed)
-        
-        col2.header('Optimized Scenario')
-        col2.write('Best case NPV: $ '+str(round(y2['best_npv'].sum()/1e+09, 4)) + 'B')
-        delta = round((y2['best_npv'].sum() - npv)/1e+06, 4)
-        col2.write(dict(final[['Country', 'Launch Date']].values))
-        my_expander = col2.expander("Show IRP updated prices")
-        with my_expander:
-            st.write(irp_pr)
-        y['base_npv'] = y.iloc[:, 1:].sum(1)
-        col1.write(y[['Country', 'base_npv']])
-        col2.write(y2[['Country', 'best_npv']])
-        # Delta visual
-        vis_df = pd.merge(y[['Country', 'base_npv']], y2[['Country', 'best_npv']], on=['Country'])
-        vis_df['diff'] = vis_df['best_npv'] - vis_df['base_npv']
-        vis = vis_df.copy()
-        vis_df = vis_df.sort_values(['best_npv'], ascending=False).set_index('Country')
-        top_10 = round(vis_df["best_npv"][:10].sum()*100/vis_df["best_npv"].sum(), 2)
-        bot_10 = round(vis_df["best_npv"][-10:].sum()*100/vis_df["best_npv"].sum(), 2)
-        vis_df = vis_df[['diff']].reset_index(False).sort_values(['diff'], ascending=False)
-        vis_df['cum_sum'] = vis_df['diff'].cumsum()
-        vis_df['cum_perc'] = 100*vis_df['cum_sum']/vis_df['diff'].sum()
-        vis_df['diff'] = vis_df['diff']/1e+06
-        # st.write(vis_df)
-        
-        st.write(f'Delta: $ ', str(delta)+'M')
-        st.write(f'Top 10 countries contribute to {top_10}% of NPV while bottom 10 are {bot_10}%')
-        
-        sns.set()
-        fig, ax = plt.subplots(figsize=(18, 8))
-        ax.bar(vis_df['Country'], vis_df["diff"], color="C0")
-        ax2 = ax.twinx()
-        ax2.plot(vis_df['Country'], vis_df["cum_perc"], color="C1", marker="D", ms=10)
-        ax2.axhline(80, color="grey", linestyle="dashed")
-        ax.set_ylabel('Delta ($ Millions)')
-        ax.set_xticklabels(vis_df['Country'], rotation=90)
-        ax2.yaxis.set_major_formatter(PercentFormatter())
-        plt.title('Top contributors to delta in optimized sequence')
-        st.pyplot(fig)
-        
-        lat_long = pd.read_csv('world_country_latitude_and_longitude.csv')
-        lat_long.rename(columns={'country':'Country'}, inplace=True)
-        vis = vis.merge(lat_long)
-        def app():
-            m = leafmap.Map(palette='RdBu_4')
-            m.add_heatmap(
-                vis,
-                latitude="latitude",
-                longitude="longitude",
-                value="best_npv",
-                name="Heat map",
-                radius=20,
-            )
-            m.to_streamlit(height=500)
-        app()
-        
-        @st.cache
-        def convert_df(df):
-            # IMPORTANT: Cache the conversion to prevent computation on every rerun
-            return df.to_csv(index=False).encode('utf-8')
-        if "download" not in st.session_state:
-            st.session_state.download = False
-        buffer_ = io.BytesIO()
-        st.session_state.download = True
-        with pd.ExcelWriter(buffer_, engine='xlsxwriter') as writer:
-            y.to_excel(writer, sheet_name='Base Npv', index=False)
-            irp.to_excel(writer, sheet_name='Base IRP prices', index=False)
-            y2.to_excel(writer, sheet_name='Optimized Npv', index=False)
-            irp_pr.to_excel(writer, sheet_name='Optimized IRP prices', index=False)
-            writer.save()
-            st.download_button(
-                                label="Download Files",
-                                data=buffer_,
-                                file_name="Output.xlsx",
-                                mime="application/vnd.ms-excel"
-                            )
-            st.info("*Files: Base NPV data | Base IRP Prices | Optimized NPV data | Optimized IRP Prices | Delta comparison", icon="ℹ️")
-      else:
-        st.stop()
+    @st.cache(suppress_st_warning=True, show_spinner=False)
+    def run_opt(base, launch_range, N):  
+      final = base.copy()
+      final['range'] = launch_range
+      final['Launch Month'] = final['range'].apply(lambda x: x[0])
+      with st.spinner('Optimizing for Best NPV...'):
+        while final['Launch Month'].value_counts().reset_index()['Launch Month'].max()>N:
+          seq_ = final['Launch Month'].tolist()
+          # final['Launch Month'] = final['Launch']
+          y_, _ = main(seq_, final)
+          final = update_launch(y_, final, N)
+          strt = dat(2023, 1, 1)
+          new_dates = [str(strt + relativedelta(months=m-1)) for m in final['Launch Month']]
+          final['Launch Date'] = new_dates
+      s2 = final['Launch Month'].tolist()
+      y2, irp_pr = main(s2, final)
+      y2['best_npv'] = y2.iloc[:, 1:].sum(1)
+      return final, y2, irp_pr
+
+    def time_convert(sec):
+      mins = sec // 60
+      sec = sec % 60
+      hours = mins // 60
+      mins = mins % 60
+      st.markdown(f"Time Taken - {int(sec)} secs")
+
+    if opt_bt:
+      start_time = time.time()
+      st.session_state.opt_bt_state = True
+      data, y2, irp_pr = run_opt(irp_base, ranges, N)
+      y2 = y2.copy()
+      end_time = time.time()
+      time_lapsed = end_time - start_time
+      time_convert(time_lapsed)
+
+      col2.header('Optimized Scenario')
+      col2.write('Best case NPV: $ '+str(round(y2['best_npv'].sum()/1e+09, 4)) + 'B')
+      delta = round((y2['best_npv'].sum() - npv)/1e+06, 4)
+      col2.write(dict(final[['Country', 'Launch Date']].values))
+      my_expander = col2.expander("Show IRP updated prices")
+      with my_expander:
+          st.write(irp_pr)
+      y['base_npv'] = y.iloc[:, 1:].sum(1)
+      col1.write(y[['Country', 'base_npv']])
+      col2.write(y2[['Country', 'best_npv']])
+      # Delta visual
+      vis_df = pd.merge(y[['Country', 'base_npv']], y2[['Country', 'best_npv']], on=['Country'])
+      vis_df['diff'] = vis_df['best_npv'] - vis_df['base_npv']
+      vis = vis_df.copy()
+      vis_df = vis_df.sort_values(['best_npv'], ascending=False).set_index('Country')
+      top_10 = round(vis_df["best_npv"][:10].sum()*100/vis_df["best_npv"].sum(), 2)
+      bot_10 = round(vis_df["best_npv"][-10:].sum()*100/vis_df["best_npv"].sum(), 2)
+      vis_df = vis_df[['diff']].reset_index(False).sort_values(['diff'], ascending=False)
+      vis_df['cum_sum'] = vis_df['diff'].cumsum()
+      vis_df['cum_perc'] = 100*vis_df['cum_sum']/vis_df['diff'].sum()
+      vis_df['diff'] = vis_df['diff']/1e+06
+      # st.write(vis_df)
+
+      st.write(f'Delta: $ ', str(delta)+'M')
+      st.write(f'Top 10 countries contribute to {top_10}% of NPV while bottom 10 are {bot_10}%')
+
+      sns.set()
+      fig, ax = plt.subplots(figsize=(18, 8))
+      ax.bar(vis_df['Country'], vis_df["diff"], color="C0")
+      ax2 = ax.twinx()
+      ax2.plot(vis_df['Country'], vis_df["cum_perc"], color="C1", marker="D", ms=10)
+      ax2.axhline(80, color="grey", linestyle="dashed")
+      ax.set_ylabel('Delta ($ Millions)')
+      ax.set_xticklabels(vis_df['Country'], rotation=90)
+      ax2.yaxis.set_major_formatter(PercentFormatter())
+      plt.title('Top contributors to delta in optimized sequence')
+      st.pyplot(fig)
+
+      lat_long = pd.read_csv('world_country_latitude_and_longitude.csv')
+      lat_long.rename(columns={'country':'Country'}, inplace=True)
+      vis = vis.merge(lat_long)
+      def app():
+          m = leafmap.Map(palette='RdBu_4')
+          m.add_heatmap(
+              vis,
+              latitude="latitude",
+              longitude="longitude",
+              value="best_npv",
+              name="Heat map",
+              radius=20,
+          )
+          m.to_streamlit(height=500)
+      app()
+
+      @st.cache
+      def convert_df(df):
+          # IMPORTANT: Cache the conversion to prevent computation on every rerun
+          return df.to_csv(index=False).encode('utf-8')
+      if "download" not in st.session_state:
+          st.session_state.download = False
+      buffer_ = io.BytesIO()
+      st.session_state.download = True
+      with pd.ExcelWriter(buffer_, engine='xlsxwriter') as writer:
+          y.to_excel(writer, sheet_name='Base Npv', index=False)
+          irp.to_excel(writer, sheet_name='Base IRP prices', index=False)
+          y2.to_excel(writer, sheet_name='Optimized Npv', index=False)
+          irp_pr.to_excel(writer, sheet_name='Optimized IRP prices', index=False)
+          writer.save()
+          st.download_button(
+                              label="Download Files",
+                              data=buffer_,
+                              file_name="Output.xlsx",
+                              mime="application/vnd.ms-excel"
+                          )
+          st.info("*Files: Base NPV data | Base IRP Prices | Optimized NPV data | Optimized IRP Prices | Delta comparison", icon="ℹ️")
+    else:
+      st.stop()
 
 
 
