@@ -615,7 +615,7 @@ else:
           st.session_state.download = False
       buffer_ = io.BytesIO()
       st.session_state.download = True
-      with pd.ExcelWriter(buffer_, engine='xlsxwriter') as writer:
+      with pd.ExcelWriter(buffer_, engine='openpyxl') as writer:
           y.to_excel(writer, sheet_name='Base Npv', index=False)
           irp.to_excel(writer, sheet_name='Base IRP prices', index=False)
           y2.to_excel(writer, sheet_name='Optimized Npv', index=False)
