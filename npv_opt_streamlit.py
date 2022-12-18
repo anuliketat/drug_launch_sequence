@@ -371,7 +371,7 @@ label = """
         - IRP data with At Launch, Post Launch and Base sheets for all markets.
         """
 st.markdown(label)
-data_file = st.file_uploader(label="", type=["xlsx"])
+data_file = st.file_uploader(label="", type=["xlsx"], label_visibility='collapsed')
 if data_file is None:
     st.write('Please upload file!')
 else:
