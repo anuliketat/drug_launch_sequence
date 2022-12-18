@@ -562,8 +562,17 @@ else:
       with my_expander:
           st.write(irp_pr)
       y['base_npv'] = y.iloc[:, 1:].sum(1)
-      col1.write(y[['Country', 'base_npv']])
-      col2.write(y2[['Country', 'best_npv']])
+      hide_table_row_index = """
+                              <style>
+                              thead tr th:first-child {display:none}
+                              tbody th {display:none}
+                              </style>
+                            """
+      # Inject CSS with Markdown
+      col1.markdown(hide_table_row_index, unsafe_allow_html=True)
+      col1.table(y[['Country', 'base_npv']])
+      col2.markdown(hide_table_row_index, unsafe_allow_html=True)
+      col2.table(y2[['Country', 'best_npv']])
       # Delta visual
       vis_df = pd.merge(y[['Country', 'base_npv']], y2[['Country', 'best_npv']], on=['Country'])
       vis_df['diff'] = vis_df['best_npv'] - vis_df['base_npv']
