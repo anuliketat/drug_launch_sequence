@@ -371,7 +371,7 @@ label = """
         - IRP data with At Launch, Post Launch and Base sheets for all markets.
         """
 st.markdown(label)
-data_file = st.file_uploader(label="", type=["xlsx"], label_visibility='collapsed')
+data_file = st.file_uploader(label="Upload", type=["xlsx"], label_visibility='collapsed')
 if data_file is None:
     st.write('Please upload file!')
 else:
@@ -547,7 +547,7 @@ else:
     if opt_bt:
       start_time = time.time()
       st.session_state.opt_bt_state = True
-      data, y2, irp_pr = run_opt(irp_base, ranges, N)
+      final, y2, irp_pr = run_opt(irp_base, ranges, N)
       y2 = y2.copy()
       end_time = time.time()
       time_lapsed = end_time - start_time
