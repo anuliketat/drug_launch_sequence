@@ -578,8 +578,8 @@ else:
       vis_df['diff'] = vis_df['best_npv'] - vis_df['base_npv']
       vis = vis_df.copy()
       vis_df = vis_df.sort_values(['best_npv'], ascending=False).set_index('Country')
-      top_10 = round(vis_df["best_npv"][:10].sum()*100/vis_df["best_npv"].sum(), 2)
-      bot_10 = round(vis_df["best_npv"][-10:].sum()*100/vis_df["best_npv"].sum(), 2)
+      top_10 = round(vis_df["best_npv"][:5].sum()*100/vis_df["best_npv"].sum(), 2)
+      bot_10 = round(vis_df["best_npv"][-5:].sum()*100/vis_df["best_npv"].sum(), 2)
       vis_df = vis_df[['diff']].reset_index(False).sort_values(['diff'], ascending=False)
       vis_df['cum_sum'] = vis_df['diff'].cumsum()
       vis_df['cum_perc'] = 100*vis_df['cum_sum']/vis_df['diff'].sum()
@@ -587,7 +587,7 @@ else:
       # st.write(vis_df)
 
       st.write(f'Delta: $ ', str(delta)+'M')
-      st.write(f'Top 10 countries contribute to {top_10}% of NPV while bottom 10 are {bot_10}%')
+      st.write(f'Top 5 countries contribute to {top_10}% of NPV while bottom 5 are {bot_10}%')
 
       sns.set()
       fig, ax = plt.subplots(figsize=(18, 8))
