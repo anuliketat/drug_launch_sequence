@@ -14,6 +14,9 @@ from collections import OrderedDict, Counter
 import itertools
 import random
 import warnings
+import requests
+from PIL import Image
+from io import BytesIO
 import mpld3
 import streamlit.components.v1 as components
 from matplotlib.ticker import PercentFormatter
@@ -589,7 +592,7 @@ else:
       st.write(f'Delta: $ ', str(delta)+'M')
       c1, c2, c3, c4, c5 = st.columns(5)
       st.write(f'Top 5 countries contribute to {top_10}% of NPV')
-      for i, j in zip([c1, c2, c3, c4, c5], vis_df.sort_values(["best_npv"], ascending=False)['Country'][:5].tolist()):
+      for i, j in zip([c1, c2, c3, c4, c5], vis.sort_values(["best_npv"], ascending=False)['Country'][:5].tolist()):
         cont = j.replace(' ', '-')
         image_url = f'https://www.countries-ofthe-world.com/flags-normal/flag-of-{cont}.png'
         try:
