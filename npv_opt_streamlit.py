@@ -587,7 +587,16 @@ else:
       # st.write(vis_df)
 
       st.write(f'Delta: $ ', str(delta)+'M')
-      st.write(f'Top 5 countries contribute to {top_10}% of NPV while bottom 5 are {bot_10}%')
+      c1, c2, c3, c4, c5 = st.columns(5)
+      st.write(f'Top 5 countries contribute to {top_10}% of NPV')
+      for i, j in zip([c1, c2, c3, c4, c5], vis_df.sort_values(["best_npv"], ascending=False)['Country'][:5].tolist()):
+        cont = j.replace(' ', '-')
+        image_url = f'https://www.countries-ofthe-world.com/flags-normal/flag-of-{cont}.png'
+        try:
+          response = requests.get(image_url)
+          image = Image.open(BytesIO(response.content), )
+          image = image.resize((21, 16))
+        i.write(j, image)
 
       sns.set()
       fig, ax = plt.subplots(figsize=(18, 8))
