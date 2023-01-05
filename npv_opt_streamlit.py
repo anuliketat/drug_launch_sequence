@@ -607,11 +607,11 @@ else:
       st.write(f'Top 5 countries contribute to {top_10}% of NPV')
       c1, c2, c3, c4, c5 = st.columns(5)
       conts = vis.sort_values(['best_npv'], ascending=False)['Country'][:5].tolist()
-      c1.write(conts[0])
-      c2.write(conts[1])
-      c3.write(conts[2])
-      c4.write(conts[3])
-      c5.write(conts[4])
+      c1.write('**'+'1. '+conts[0]+'**')
+      c2.write('**'+'2. '+conts[1]+'**')
+      c3.write('**'+'3. '+conts[2]+'**')
+      c4.write('**'+'4. '+conts[3]+'**')
+      c5.write('**'+'5. '+conts[4]+'**')
 #       cont_dic = {}
 #       for cont in conts:
 #         cont = cont.replace(' ', '-')
