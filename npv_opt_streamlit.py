@@ -507,40 +507,33 @@ else:
     with my_expander:
       st.write(irp)
     
-    def reset():
-      place_holder.empty()
-      N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
-      st.sidebar.write('Select Launch range of countries')
-      ranges = []
+    def reset(values):
       for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
-        values = st.sidebar.slider(cont, 1, 36, (mi, ma))
-        ranges.append(values)
-      ranges = [list(range(i[0], i[1]+1)) for i in ranges]
-      c1, c2 = st.sidebar.columns(2)
-      with c1:
-        opt_bt = st.button(label='Optimize')
-      with c2:
-        reset_bt = st.button(label='↻ Reset')
-      st.sidebar.write('')
-      
-    st.sidebar.subheader('Constraints')
-    place_holder = st.sidebar.empty()
-    N = place_holder.slider('Allowed number of launch countries in a month', 1, 8, 4)
-    place_holder.write('Select Launch range of countries')
-    ranges = []
-    for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
-      values = place_holder.slider(cont, 1, 36, (mi, ma))
-      ranges.append(values)
-    ranges = [list(range(i[0], i[1]+1)) for i in ranges]
-    c1, c2 = place_holder.columns(2)
-    with c1:
-      opt_bt = place_holder.button(label='Optimize')
-    with c2:
-      reset_bt = place_holder.button(label='↻ Reset', on_click=reset)
-    place_holder.write('')
+        st.session_state[f"test_slider_{cont}"] = values[f"test_slider_{cont}"]
+      st.session_state['constraint'] = values['constraint']
     
-    if reset_bt:
-      reset()
+    st.sidebar.header('Constraints')
+    if 'constraint' not in st.session_state:
+      st.session_state['constraint'] = 0
+    N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4, key='constraint')
+    st.sidebar.write('Select Launch range of countries')
+    ranges = []
+    reset_dic = {}
+    for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
+      if f"test_slider_{cont}" not in st.session_state:
+        st.session_state[f"test_slider_{cont}"] = 0
+      values = st.sidebar.slider(cont, 1, 36, (mi, ma), key=f'test_slider_{cont}')
+      ranges.append(values)
+      reset_dic[f"test_slider_{cont}"] = values
+    reset_dic['constraint'] = N
+    ranges = [list(range(i[0], i[1]+1)) for i in ranges]
+    c1, c2 = st.sidebar.columns(2)
+    with c1:
+      opt_bt = st.button(label='Optimize')
+    with c2:
+      reset_bt = st.button(label='↻ Reset', on_click=reset, kwargs={'values':reset_dic})
+    st.sidebar.write('')
+    
     if "opt_bt_state" not in st.session_state:
       st.session_state.opt_bt_state = False
         
