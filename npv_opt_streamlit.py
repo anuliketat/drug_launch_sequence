@@ -524,7 +524,7 @@ else:
       st.sidebar.write('')
       
     st.sidebar.subheader('Constraints')
-    place_holder = st.empty()
+    place_holder = st.sidebar.empty()
     N = place_holder.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
     place_holder.sidebar.write('Select Launch range of countries')
     ranges = []
