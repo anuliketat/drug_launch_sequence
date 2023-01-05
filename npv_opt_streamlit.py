@@ -515,8 +515,28 @@ else:
       values = st.sidebar.slider(cont, 1, 36, (mi, ma))
       ranges.append(values)
     ranges = [list(range(i[0], i[1]+1)) for i in ranges]
-    opt_bt = st.sidebar.button(label='Optimize')
+    c1, c2 = st.sidebar.columns(2)
+    opt_bt = c1.sidebar.button(label='Optimize')
+    reset_bt = c2.sidebar.button(label='↻')
     st.sidebar.write('')
+    
+    def reset():
+      st.sidebar.subheader('Constraints')
+      N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
+      st.sidebar.write('Select Launch range of countries')
+      ranges = []
+      for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
+        values = st.sidebar.slider(cont, 1, 36, (mi, ma))
+        ranges.append(values)
+      ranges = [list(range(i[0], i[1]+1)) for i in ranges]
+      opt_bt = st.sidebar.button(label='Optimize')
+      st.sidebar.write('')
+      return N, ranges
+    if reset_bt:
+      N, ranges = reset()
+      _msg = st.success('Parameters Reset!', icon="✅")
+      time.sleep(2)
+      _msg.empty()
 
     if "opt_bt_state" not in st.session_state:
       st.session_state.opt_bt_state = False
