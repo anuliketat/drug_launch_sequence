@@ -519,6 +519,12 @@ else:
       _msg = st.success('Parameters Reset!', icon="✅")
       time.sleep(1)
       _msg.empty() 
+      c1, c2 = st.sidebar.columns(2)
+      with c1:
+        opt_bt = st.button(label='Optimize')
+      with c2:
+        reset_bt = st.button(label='↻ Reset', on_click=reset)
+      st.sidebar.write('')
       
     st.sidebar.subheader('Constraints')
     N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
