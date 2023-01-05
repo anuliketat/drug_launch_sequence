@@ -520,7 +520,7 @@ else:
       with c1:
         opt_bt = st.button(label='Optimize')
       with c2:
-        reset_bt = st.button(label='↻ Reset', on_click=reset)
+        reset_bt = st.button(label='↻ Reset')
       st.sidebar.write('')
       
     st.sidebar.subheader('Constraints')
@@ -538,7 +538,9 @@ else:
     with c2:
       reset_bt = place_holder.button(label='↻ Reset', on_click=reset)
     place_holder.sidebar.write('')
-   
+    
+    if reset_bt:
+      reset()
     if "opt_bt_state" not in st.session_state:
       st.session_state.opt_bt_state = False
         
