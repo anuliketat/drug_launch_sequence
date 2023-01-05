@@ -506,7 +506,18 @@ else:
     my_expander = col1.expander("Show IRP updated prices")
     with my_expander:
       st.write(irp)
-
+    
+    def reset():
+      N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
+      ranges = []
+      for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
+        values = st.sidebar.slider(cont, 1, 36, (mi, ma))
+        ranges.append(values)
+      ranges = [list(range(i[0], i[1]+1)) for i in ranges]
+      _msg = st.success('Parameters Reset!', icon="✅")
+      time.sleep(2)
+      _msg.empty() 
+      
     st.sidebar.subheader('Constraints')
     N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
     st.sidebar.write('Select Launch range of countries')
@@ -517,25 +528,11 @@ else:
     ranges = [list(range(i[0], i[1]+1)) for i in ranges]
     c1, c2 = st.sidebar.columns(2)
     with c1:
-      opt_bt = st.sidebar.button(label='Optimize')
+      opt_bt = st.button(label='Optimize')
     with c2:
-      reset_bt = st.sidebar.button(label='↻')
+      reset_bt = st.button(label='↻ Reset', on_click=reset)
     st.sidebar.write('')
-    
-    def reset():
-      N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
-      ranges = []
-      for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
-        values = st.sidebar.slider(cont, 1, 36, (mi, ma))
-        ranges.append(values)
-      ranges = [list(range(i[0], i[1]+1)) for i in ranges]
-      return N, ranges
-    if reset_bt:
-      N, ranges = reset()
-      _msg = st.success('Parameters Reset!', icon="✅")
-      time.sleep(2)
-      _msg.empty()
-
+   
     if "opt_bt_state" not in st.session_state:
       st.session_state.opt_bt_state = False
         
