@@ -525,7 +525,7 @@ else:
       with c2:
         reset_bt = st.button(label='↻ Reset', on_click=reset)
       st.sidebar.write('')
-      
+    reset()
 #     st.sidebar.subheader('Constraints')
 #     N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
 #     st.sidebar.write('Select Launch range of countries')
