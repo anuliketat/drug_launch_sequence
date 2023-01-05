@@ -513,9 +513,9 @@ else:
 #       st.session_state['constraint'] = values['constraint']
     
     st.sidebar.header('Constraints')
-    if 'constraint' not in st.session_state:
-      st.session_state['constraint'] = 0
-    N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4, key='constraint')
+#     if 'constraint' not in st.session_state:
+#       st.session_state['constraint'] = 0
+    N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
     st.sidebar.write('Select Launch range of countries')
     ranges = []
     reset_dic = {}
