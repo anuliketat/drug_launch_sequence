@@ -525,19 +525,19 @@ else:
       
     st.sidebar.subheader('Constraints')
     place_holder = st.sidebar.empty()
-    N = place_holder.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
-    place_holder.sidebar.write('Select Launch range of countries')
+    N = place_holder.slider('Allowed number of launch countries in a month', 1, 8, 4)
+    place_holder.write('Select Launch range of countries')
     ranges = []
     for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
-      values = place_holder.sidebar.slider(cont, 1, 36, (mi, ma))
+      values = place_holder.slider(cont, 1, 36, (mi, ma))
       ranges.append(values)
     ranges = [list(range(i[0], i[1]+1)) for i in ranges]
-    c1, c2 = place_holder.sidebar.columns(2)
+    c1, c2 = place_holder.columns(2)
     with c1:
       opt_bt = place_holder.button(label='Optimize')
     with c2:
       reset_bt = place_holder.button(label='↻ Reset', on_click=reset)
-    place_holder.sidebar.write('')
+    place_holder.write('')
     
     if reset_bt:
       reset()
