@@ -601,6 +601,8 @@ else:
           response = requests.get(image_url)
           image = Image.open(BytesIO(response.content), )
           image = image.resize((21, 16))
+        except Exception as e:
+          print(cont, e)        
         cont_dic[cont] = image
       c1.write(cont_dic[conts[0]])
       c1.write(list(cont_dic.keys())[0])
