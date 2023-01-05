@@ -507,10 +507,10 @@ else:
     with my_expander:
       st.write(irp)
     
-    def reset(values):
-      for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
-        st.session_state[f"test_slider_{cont}"] = values[f"test_slider_{cont}"]
-      st.session_state['constraint'] = values['constraint']
+#     def reset(values):
+#       for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
+#         st.session_state[f"test_slider_{cont}"] = values[f"test_slider_{cont}"]
+#       st.session_state['constraint'] = values['constraint']
     
     st.sidebar.header('Constraints')
     if 'constraint' not in st.session_state:
@@ -520,18 +520,16 @@ else:
     ranges = []
     reset_dic = {}
     for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
-      if f"test_slider_{cont}" not in st.session_state:
-        st.session_state[f"test_slider_{cont}"] = 0
-      values = st.sidebar.slider(cont, 1, 36, (mi, ma), key=f'test_slider_{cont}')
+      values = st.sidebar.slider(cont, 1, 36, (mi, ma))
       ranges.append(values)
-      reset_dic[f"test_slider_{cont}"] = values
+#       reset_dic[f"test_slider_{cont}"] = values
     reset_dic['constraint'] = N
     ranges = [list(range(i[0], i[1]+1)) for i in ranges]
     c1, c2 = st.sidebar.columns(2)
     with c1:
       opt_bt = st.button(label='Optimize')
-    with c2:
-      reset_bt = st.button(label='↻ Reset', on_click=reset, kwargs={'values':reset_dic})
+#     with c2:
+#       reset_bt = st.button(label='↻ Reset', on_click=reset, kwargs={'values':reset_dic})
     st.sidebar.write('')
     
     if "opt_bt_state" not in st.session_state:
@@ -609,23 +607,28 @@ else:
       st.write(f'Top 5 countries contribute to {top_10}% of NPV')
       c1, c2, c3, c4, c5 = st.columns(5)
       conts = vis.sort_values(['best_npv'], ascending=False)['Country'][:5].tolist()
-      cont_dic = {}
-      for cont in conts:
-        cont = cont.replace(' ', '-')
-        image_url = f'https://www.countries-ofthe-world.com/flags-normal/flag-of-{cont}.png'
-        cont_dic[cont] = image_url
+      c1.write(conts[0])
+      c2.write(conts[1])
+      c3.write(conts[2])
+      c4.write(conts[3])
+      c5.write(conts[4])
+#       cont_dic = {}
+#       for cont in conts:
+#         cont = cont.replace(' ', '-')
+#         image_url = f'https://www.countries-ofthe-world.com/flags-normal/flag-of-{cont}.png'
+#         cont_dic[cont] = image_url
         
         
-      c1.image(cont_dic[conts[0]], width=20)
-      c1.write(list(cont_dic.keys())[0])
-      c2.image(cont_dic[conts[0]], width=20)
-      c2.write(list(cont_dic.keys())[1])
-      c3.image(cont_dic[conts[0]], width=20)
-      c3.write(list(cont_dic.keys())[2])
-      c4.image(cont_dic[conts[0]], width=20)
-      c4.write(list(cont_dic.keys())[3])
-      c5.image(cont_dic[conts[0]], width=20)
-      c5.write(list(cont_dic.keys())[4])
+#       c1.image(cont_dic[conts[0]], width=20)
+#       c1.write(list(cont_dic.keys())[0])
+#       c2.image(cont_dic[conts[0]], width=20)
+#       c2.write(list(cont_dic.keys())[1])
+#       c3.image(cont_dic[conts[0]], width=20)
+#       c3.write(list(cont_dic.keys())[2])
+#       c4.image(cont_dic[conts[0]], width=20)
+#       c4.write(list(cont_dic.keys())[3])
+#       c5.image(cont_dic[conts[0]], width=20)
+#       c5.write(list(cont_dic.keys())[4])
 
       sns.set()
       fig, ax = plt.subplots(figsize=(18, 8))
