@@ -516,8 +516,10 @@ else:
       ranges.append(values)
     ranges = [list(range(i[0], i[1]+1)) for i in ranges]
     c1, c2 = st.sidebar.columns(2)
-    opt_bt = c1.sidebar.button(label='Optimize')
-    reset_bt = c2.sidebar.button(label='↻')
+    with c1:
+      opt_bt = st.sidebar.button(label='Optimize')
+    with c2:
+      reset_bt = st.sidebar.button(label='↻')
     st.sidebar.write('')
     
     def reset():
