@@ -594,6 +594,8 @@ else:
       st.write(f'Top 5 countries contribute to {top_10}% of NPV')
       conts = vis.sort_values(['best_npv'], ascending=False)['Country'][:5].tolist()
       cont_dic = {}
+      cont = 'United Kingdom'
+      st.image(f'https://www.countries-ofthe-world.com/flags-normal/flag-of-{cont}.png', width=20)
       for cont in conts:
         cont = cont.replace(' ', '-')
         image_url = f'https://www.countries-ofthe-world.com/flags-normal/flag-of-{cont}.png'
