@@ -590,31 +590,25 @@ else:
       # st.write(vis_df)
 
       st.write(f'Delta: $ ', str(delta)+'M')
-      c1, c2, c3, c4, c5 = st.columns(5)
       st.write(f'Top 5 countries contribute to {top_10}% of NPV')
+      c1, c2, c3, c4, c5 = st.columns(5)
       conts = vis.sort_values(['best_npv'], ascending=False)['Country'][:5].tolist()
       cont_dic = {}
-      cont = 'United Kingdom'
-      st.image(f'https://www.countries-ofthe-world.com/flags-normal/flag-of-{cont}.png', width=20)
       for cont in conts:
         cont = cont.replace(' ', '-')
         image_url = f'https://www.countries-ofthe-world.com/flags-normal/flag-of-{cont}.png'
-        try:
-          response = requests.get(image_url)
-          image = Image.open(BytesIO(response.content), )
-          image = image.resize((21, 16))
-        except Exception as e:
-          print(cont, e)        
-        cont_dic[cont] = image
-      c1.write(cont_dic[conts[0]])
+        cont_dic[cont] = image_url
+        
+        
+      c1.image(cont_dic[conts[0]], width=20)
       c1.write(list(cont_dic.keys())[0])
-      c2.write(cont_dic[conts[0]])
+      c2.image(cont_dic[conts[0]], width=20)
       c2.write(list(cont_dic.keys())[1])
-      c3.write(cont_dic[conts[0]])
+      c3.image(cont_dic[conts[0]], width=20)
       c3.write(list(cont_dic.keys())[2])
-      c4.write(cont_dic[conts[0]])
+      c4.image(cont_dic[conts[0]], width=20)
       c4.write(list(cont_dic.keys())[3])
-      c5.write(cont_dic[conts[0]])
+      c5.image(cont_dic[conts[0]], width=20)
       c5.write(list(cont_dic.keys())[4])
 
       sns.set()
