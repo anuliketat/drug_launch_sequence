@@ -521,16 +521,12 @@ else:
     st.sidebar.write('')
     
     def reset():
-      st.sidebar.subheader('Constraints')
       N = st.sidebar.slider('Allowed number of launch countries in a month', 1, 8, 4)
-      st.sidebar.write('Select Launch range of countries')
       ranges = []
       for cont, mi, ma in irp_base[['Country', 'Min ', 'Max']].values:
         values = st.sidebar.slider(cont, 1, 36, (mi, ma))
         ranges.append(values)
       ranges = [list(range(i[0], i[1]+1)) for i in ranges]
-      opt_bt = st.sidebar.button(label='Optimize')
-      st.sidebar.write('')
       return N, ranges
     if reset_bt:
       N, ranges = reset()
